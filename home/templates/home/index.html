@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Campus</title>
+</head>
+<body>
+    <ul>
+        {%for prf in all_users%}
+        <li><a href = "/home/{{prf.user.id}}">{{prf.user.username}}</a></li>
+        {%endfor%}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<html>
+<head>
+	<title>Welcome to Slotify!</title>
+</head>
+<script>
+    tok = makeid();
+    document.cookie = "facetoken=" + tok;
+    console.log(document.cookie);
+    function makeid() {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (var i = 0; i < 50; i++)
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      return text;
+    }
+    var ws = new WebSocket("ws://127.0.0.1:3001/");
+    var msg;
+    ws.onopen= function() {
+        ws.send('Hello face!,' + tok);
+    };
+    ws.onmessage= function(s) {
+        console.log('got reply ');
+        msg = s.data;
+        console.log(msg);
+        if (msg == 'hey, you got it!, refresh')
+            console.log('we got it!');
+        else
+            console.log("we don't have it!");
+        ws.close(3131, 'khalas');
+        //location.reload();
+    };
+</script>
+<body>
+
+	<div id="inputContainer">
+		<form id="loginForm" action="register.html" method="POST">
+			<h2>Login to your account</h2>
+			<p>
+				<label for="loginUsername">Username</label>
+				<input id="loginUsername" name="loginUsername" type="text" placeholder="e.g. bartSimpson" required>
+			</p>
+			<p>
+				<label for="loginPassword">Password</label>
+				<input id="loginPassword" name="loginPassword" type="password" required>
+			</p>
+
+			<button type="submit" name="loginButton">LOG IN</button>
+			
+		</form>
+	</div>
+
+</body>
+</html>

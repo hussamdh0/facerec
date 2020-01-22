@@ -1,0 +1,92 @@
+<html>
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'website/style.css' %}" />
+<head>
+	<title>Welcome to Smart Campus!</title>
+</head>
+
+<script>
+    ex = {{ ex }}
+    if(ex)
+        throw new Error();
+    tok = makeid();
+    document.cookie = "facetoken=" + tok;
+    var s = "{% csrf_token %}"
+    x = (s.search('value'))
+    s = s.slice(x + 7)
+    s = s.slice(0, s.indexOf("'"))
+    console.log(s)
+    //document.cookie = "csrfmiddlewaretoken=" + s;
+    console.log(document.cookie);
+    function makeid() {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (var i = 0; i < 50; i++)
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      return text;
+    }
+    var ws = new WebSocket("ws://127.0.0.1:3001/");
+    var msg;
+    ws.onopen= function() {
+        ws.send('Hello face!,' + tok);
+    };
+    ws.onmessage= function(st) {
+        console.log('got reply ');
+        msg = st.data;
+        console.log(msg);
+        if (msg == 'hey, you got it!, refresh') {
+            console.log('we got it!');
+            delay(1000);
+            post("");
+        }
+        else
+            console.log("we don't have it!");
+        ws.close(3131, 'were done here!');
+        //location.reload();
+    };
+
+    function post(path) {
+        method =  "post";
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("id", "csrfmiddlewaretoken");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", 'csrfmiddlewaretoken');
+        hiddenField.setAttribute("value", s);
+        form.appendChild(hiddenField);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    function delay(ms) {
+        ms += new Date().getTime();
+        while (new Date() < ms){}
+    }
+
+</script>
+<body>
+
+	<div id="inputContainer">
+		<form id="loginForm" facetoken= facetoken action="" method="POST">
+            {% csrf_token %}
+			<h2>Login to your account</h2>
+			<p>
+				<label for="loginUsername">Username</label>
+				<input id="loginUsername" name="loginUsername" type="text" placeholder="e.g. bartSimpson" required>
+			</p>
+			<p>
+				<label for="loginPassword">Password</label>
+				<input id="loginPassword" name="loginPassword" type="password" required>
+			</p>
+
+			<button type="submit" name="loginButton">LOG IN</button>
+			
+		</form>
+	</div>
+    <er>{{ Err }}</er>
+
+</body>
+</html>
